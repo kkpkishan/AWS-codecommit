@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create A New codecommit repository
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+    - Label:
+        default: 'Parent Stacks'
+      Parameters:
+      - RepoName
+      - ParentAlertStack
+Parameters:
+  RepoName:
+    Type: String
+    Default: web
+    Description: 'Provide Repo Name' 
+  ParentAlertStack:
+    Description: 'stack name of parent alert stack based on alert.yaml template.'
+    Type: String
+    Default: ''
+Resources:
+  webRepo:
+    Type: AWS::CodeCommit::Repository
+    Properties:
+      RepositoryName: !Ref RepoName
+      RepositoryDescription: a description
+#      Triggers:
+#      - Name: MainTrigger
+#        CustomData: Project
+#        DestinationArn: {'Fn::ImportValue': !Sub '${ParentAlertStack}-TopicARN'}
+#        Branches:
+#        - main
+#        Events:
+#        - all
+Outputs:
+  StackName:
+    Description: 'Stack name.'
+    Value: !Sub '${AWS::StackName}'
+  RepositoryName:
+    Description: 'The name of the codecommit repository.'
+    Value: !Ref RepoName
+    Export:
+      Name: !Sub '${AWS::StackName}-RepositoryName'
+  RepositoryARN:
+    Description: 'The ARN of the codecommit repository.'
+    Value: !GetAtt 'webRepo.Arn'
+    Export:
+      Name: !Sub '${AWS::StackName}-RepositoryARN'
+
+
+
